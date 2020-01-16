@@ -8,7 +8,10 @@ import {
 import { blueGrey } from '@material-ui/core/colors';
 import { IState } from '../store';
 import { requestCurrent, DefaultCity } from '../dataRequest/weatherRequest';
-import { actions } from '../store/reducer'
+import { actions } from '../store/reducer';
+import Location from './Location';
+import WeatherCard from './WeatherCard';
+import WeatherInfo from './WeatherInfo';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -18,53 +21,18 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     backgroundColor: blueGrey[50],
     marginTop: theme.spacing(5),
     padding: theme.spacing(5),
-  },
-  location: {
-    width: '30%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  weather: {
-    width: '40%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  temp: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  disabled: {
-    color: '#aaaaaa',
-  },
-  info: {
-    flexGrow: 1,
-    display: 'flex',
 
-    '&>div': {
-      width: '50%',
-      display: 'flex',
-      flexDirection: 'column',
+    '&>:first-child': {
+      width: '30%',
+    },
+    '&>:nth-child(2)': {
+      width: '40%',
+    },
+    '&>:last-child': {
+      flexGrow: 1,
     },
   },
 }));
-
-const CurrentInfoStrs = [
-  ['Wind Speed', 'wind_mph', 'mph'],
-  ['Wind Direction', 'wind_dir', ''],
-  ['Pressure', 'pressure_mb', 'mb'],
-  ['Precipitation', 'precip_mm', 'mm'],
-  ['Humidity', 'humidity', '%'],
-  ['Cloud', 'cloud', '%'],
-  ['Feels like', 'feelslike_f', 'F'],
-  ['UV Index', 'uv', ''],
-  ['Wind gust', 'gust_mph', 'mph'],
-]
-
 
 const CityCurrent = () => {
   const classes = useStyles();
@@ -82,47 +50,9 @@ const CityCurrent = () => {
       })
     currentInfo = (
       <Container maxWidth="md" className={classes.root}>
-        <div className={classes.location}>
-          <Typography variant="h2">
-            {current.location.name}
-          </Typography>
-          <Typography variant="subtitle1">
-            {`${current.location.region}, ${current.location.country}`}
-          </Typography>
-          <Typography variant="body2">
-            {`Lagitude: ${current.location.lat}, Longitude: ${current.location.lon}`}
-          </Typography>
-        </div>
-        <div className={classes.weather}>
-          <div className={classes.temp}>
-            <img src={`http:${current.current.condition.icon}`} alt={`${current.current.condition.text}`} />
-            <Typography variant="h2">
-              {current.current.temp_f}
-            </Typography>
-            <Typography variant="h5">
-              <div>F</div>
-              <div className={classes.disabled}>C</div>
-            </Typography>
-          </div>
-          <Typography variant="body1">
-            {timestr}
-          </Typography>
-          <Typography variant="body1">
-            {datestr}
-          </Typography>
-        </div>
-        <div className={classes.info}>
-          <div>
-            { CurrentInfoStrs.map((item) => <Typography variant="body1">{item[0]}</Typography>) }
-          </div>
-          <div>
-            { CurrentInfoStrs.map((item) => (
-              <Typography variant="body1">
-                {`${current.current[item[1]]} ${item[2]}`}
-              </Typography>
-            ))}
-          </div>
-        </div>
+        <Location location={current.location} />
+        <WeatherCard location={current.location} current={current.current} />
+        <WeatherInfo current={current.current} />
       </Container>
     )
   } else {
