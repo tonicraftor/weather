@@ -12,6 +12,7 @@ import { actions } from '../store/reducer';
 import Location from './Location';
 import WeatherCard from './WeatherCard';
 import WeatherInfo from './WeatherInfo';
+import ForecastCard from './ForecastCard';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -19,9 +20,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
     borderRadius: theme.shape.borderRadius,
     backgroundColor: blueGrey[50],
+    marginTop: theme.spacing(1),
+  },
+  firstBlock: {
     marginTop: theme.spacing(5),
+  },
+  currentBlock: {
     padding: theme.spacing(5),
-
     '&>:first-child': {
       width: '30%',
     },
@@ -32,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       flexGrow: 1,
     },
   },
+  forecastBLock: {
+    padding: theme.spacing(2),
+  },
 }));
 
 const CityCurrent = () => {
@@ -41,26 +49,28 @@ const CityCurrent = () => {
 
   let currentInfo = <></>;
   if (current) {
+    // console.log(current);
     const localtime = new Date(current.location.localtime_epoch * 1000);
-    const timestr = localtime.toLocaleTimeString('en-US',
-      { timeZone: current.location.tz_id, timeZoneName: 'short' })
-    const datestr = localtime.toLocaleDateString('en-US',
-      {
-        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
-      })
     currentInfo = (
-      <Container maxWidth="md" className={classes.root}>
-        <Location location={current.location} />
-        <WeatherCard location={current.location} current={current.current} />
-        <WeatherInfo current={current.current} />
-      </Container>
+      <>
+        <Container maxWidth="md" className={`${classes.root} ${classes.firstBlock} ${classes.currentBlock}`}>
+          <Location location={current.location} />
+          <WeatherCard location={current.location} current={current.current} />
+          <WeatherInfo current={current.current} />
+        </Container>
+        <Container maxWidth="md" className={`${classes.root} ${classes.forecastBLock}`}>
+          <ForecastCard location={current.location} days={7} />
+        </Container>
+      </>
     )
   } else {
     requestCurrent(DefaultCity).then((res) => {
-      /* if (res.status !== 200) {
-
-      } */
-      dispatch(actions.setCurrent(res.data));
+      if (res.status === 200) {
+        dispatch(actions.setCurrent(res.data));
+      } else {
+        // error
+        dispatch(actions.setError(res.status));
+      }
     })
   }
 

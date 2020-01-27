@@ -19,6 +19,11 @@ const slice = createSlice({
       const newState = { ...state, cityCurrent: action.payload };
       return newState;
     },
+    setError: (state: StateObj, action: PayloadAction<number>) => {
+      // eslint-disable-next-line no-param-reassign
+      const newState = { ...state };
+      return newState;
+    },
   },
 })
 

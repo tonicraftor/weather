@@ -92,11 +92,12 @@ const CitySearch = () => {
 
   const selectCity = (name: string) => {
     requestCurrent(name).then((res) => {
-      console.log(res)
-      /* if (res.status !== 200) {
-
-      } */
-      dispatch(actions.setCurrent(res.data));
+      if (res.status === 200) {
+        dispatch(actions.setCurrent(res.data));
+      } else {
+        // error
+        dispatch(actions.setError(res.status));
+      }
     })
     setList([])
   }
